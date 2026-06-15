@@ -97,6 +97,7 @@ def get_config(config_code: str) -> dict:
                         f"Choose from {list(SWARN_CONFIGS.keys())}")
     cfg = SWARN_CONFIGS[config_code].copy()
     cfg.pop("description")
+    cfg["detect_radius"] = 2.0   # frozen v2.1 benchmark value
     return cfg
 
 
