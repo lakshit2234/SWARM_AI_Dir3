@@ -131,14 +131,39 @@ def train_and_eval(config_code: str, n_eval_episodes: int = 30):
     obs_array, _  = env.reset()
     metrics.episode_start()
 
-    epsilon       = 1.0
+    # epsilon       = 1.0
     epsilon_delta = (1.0 - 0.05) / train_cfg["epsilon_decay_steps"]
     episode_count = 0
     loss_log      = []
 
+    resume_step = 0
+    latest_ckpt = None
+    if os.path.exists(ckpt_dir):
+        ckpts = sorted([f for f in os.listdir(ckpt_dir) if f.endswith(".pt")])
+        if ckpts:
+            latest_ckpt = os.path.join(ckpt_dir, ckpts[-1])
+
+    if latest_ckpt:
+        print(f"  Resuming from: {latest_ckpt}")
+        ckpt_data = torch.load(latest_ckpt, map_location=device, weights_only=True)
+        for i, net in enumerate(agent_nets):
+            net.load_state_dict(ckpt_data["agent_states"][i])
+        mixer.load_state_dict(ckpt_data["mixer_state"])
+        optimizer.load_state_dict(ckpt_data["optimizer_state"])
+        for i in range(n):
+            target_nets[i].load_state_dict(agent_nets[i].state_dict())
+        target_mixer.load_state_dict(mixer.state_dict())
+        resume_step = ckpt_data.get("step", 0)
+        steps_decayed = min(resume_step, train_cfg["epsilon_decay_steps"])
+        epsilon = max(0.05, 1.0 - (0.95 * steps_decayed / train_cfg["epsilon_decay_steps"]))
+        print(f"  Resumed from step {resume_step:,} | epsilon={epsilon:.4f}\n")
+    else:
+        epsilon = 1.0
+
     # ── Training loop ─────────────────────────────────────────────────────────
     print(f"  Training started...\n")
-    for step in range(1, train_cfg["total_steps"] + 1):
+    # for step in range(1, train_cfg["total_steps"] + 1):
+    for step in range(resume_step + 1, train_cfg["total_steps"] + 1):
 
         int_actions = select_actions(obs_array, agent_nets, epsilon, device)
         vel_actions = ACTION_MAP[int_actions]
