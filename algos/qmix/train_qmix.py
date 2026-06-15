@@ -611,7 +611,9 @@ def train(config: dict = None):
 
 
         buffer.add(obs_array, next_obs_array, int_actions, rewards, done)
-        metrics.update(step, info, collisions_this_step=collisions)
+        # metrics.update(step, info, collisions_this_step=collisions)
+        metrics.update(step, info, collisions_this_step=collisions,
+               agent_positions=env.agent_pos)
         obs_array = next_obs_array
 
         # ── Train ─────────────────────────────────────────────────────────────
