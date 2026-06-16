@@ -26,7 +26,7 @@ from algos.qmix.train_qmix  import ACTION_MAP, N_ACTIONS, select_actions, comput
 
 # ── VRAM limits per agent count ───────────────────────────────────────────────
 # If n_agents exceeds threshold, fall back to CPU to avoid OOM crash
-VRAM_SAFE_MAX_AGENTS = 25   # above this → CPU
+VRAM_SAFE_MAX_AGENTS = 50  # above this → CPU
 
 # ── Training budget per config tier ──────────────────────────────────────────
 def get_train_cfg(n_agents: int, config_code: str) -> dict:
@@ -83,7 +83,7 @@ def train_and_eval(config_code: str, n_eval_episodes: int = 30):
     if torch.cuda.is_available() and n <= VRAM_SAFE_MAX_AGENTS:
         device = torch.device("cuda")
         print(f"  Device: cuda ({torch.cuda.get_device_name(0)})")
-        torch.cuda.set_per_process_memory_fraction(0.5)  # cap at 3GB of 6GB
+        torch.cuda.set_per_process_memory_fraction(0.85)  # cap at 3GB of 6GB
     else:
         device = torch.device("cpu")
         if n > VRAM_SAFE_MAX_AGENTS:
