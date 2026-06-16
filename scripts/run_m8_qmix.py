@@ -139,7 +139,11 @@ def train_and_eval(config_code: str, n_eval_episodes: int = 30):
     resume_step = 0
     latest_ckpt = None
     if os.path.exists(ckpt_dir):
-        ckpts = sorted([f for f in os.listdir(ckpt_dir) if f.endswith(".pt")])
+        # ckpts = sorted([f for f in os.listdir(ckpt_dir) if f.endswith(".pt")])
+        ckpts = sorted(
+            [f for f in os.listdir(ckpt_dir) if f.endswith(".pt")],
+            key=lambda x: int(''.join(filter(str.isdigit, x)) or 0)
+        )
         if ckpts:
             latest_ckpt = os.path.join(ckpt_dir, ckpts[-1])
 

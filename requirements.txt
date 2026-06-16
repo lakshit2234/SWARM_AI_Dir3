@@ -1,0 +1,15 @@
+numpy
+matplotlib
+pygame
+gymnasium
+pettingzoo
+supersuit
+stable-baselines3
+tensorboard
+pandas
+scipy
+seaborn
+pybullet
+torch
+torchvision
+torchaudio

@@ -4,7 +4,7 @@ import numpy as np
 
 
 class MetricsTracker:
-    def __init__(self):
+    def __init__(self): 
         self.episodes = []
         self._ep = {}
 
