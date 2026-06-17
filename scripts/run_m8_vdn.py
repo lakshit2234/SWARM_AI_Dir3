@@ -51,8 +51,7 @@ def run(config_code: str, n_eval_episodes: int = 30):
     results_dir = os.path.join("results", "vdn", config_code)
     ckpt_dir    = os.path.join(results_dir, "checkpoints")
 
-    device_str = "cuda" if (torch.cuda.is_available()
-                            and n <= VRAM_SAFE_MAX_AGENTS) else "cpu"
+
 
     print(f"\n{'='*60}")
     print(f"  VDN | {config_code} | {SWARN_CONFIGS[config_code]['description']}")
@@ -72,6 +71,7 @@ def run(config_code: str, n_eval_episodes: int = 30):
         "lr":             5e-5,
         "gamma":          0.99,
         "target_update_freq": 500,
+        "vram_safe_max_agents":  VRAM_SAFE_MAX_AGENTS,
     }
 
     agent_nets = train(cfg)

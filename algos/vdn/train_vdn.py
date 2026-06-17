@@ -123,7 +123,10 @@ def train(config: dict = None):
     if config:
         cfg.update(config)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    n_agents     = cfg.get("n_agents", 6)
+    vram_max     = cfg.get("vram_safe_max_agents", 50)
+    use_cuda     = torch.cuda.is_available() and n_agents <= vram_max
+    device       = torch.device("cuda" if use_cuda else "cpu")
     print(f"  Device: {device}")
     if device.type == "cuda":
         print(f"  GPU: {torch.cuda.get_device_name(0)}")
